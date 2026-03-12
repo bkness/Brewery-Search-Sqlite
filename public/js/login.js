@@ -17,7 +17,8 @@ const loginformhandler = async (event) => {
     if (response.ok) {
       document.location.replace("/");
     } else {
-      alert("Check your Username or Password");
+      const data = await response.json();
+      alert(data.message || response.status);
     }
   }
 };
@@ -41,7 +42,8 @@ const signupformhandler = async (event) => {
     if (response.ok) {
       document.location.replace("/");
     } else {
-      alert(response.status);
+      const data = await response.json();
+      alert(data.message || response.status);
     }
   }
 };

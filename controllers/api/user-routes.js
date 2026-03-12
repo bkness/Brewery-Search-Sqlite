@@ -2,12 +2,11 @@ const router = require("express").Router();
 const { User } = require("../../models");
 
 router.post("/", async (req, res) => {
-  console.log(req.body);
   try {
     // console.log(req.body)
     const userData = await User.create({
-      email: req.body.email,
       name: req.body.name,
+      email: req.body.email.toLowerCase(),
       password: req.body.password,
     });
 
@@ -18,14 +17,26 @@ router.post("/", async (req, res) => {
       res.status(200).json(userData);
     });
   } catch (err) {
+    if (err.name === "SequelizeUniqueConstraintError") {
+      const field = err.errors[0].path;
+
+      if (field === "email") {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+      if (field === "name") {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+    }
     console.error(err);
-    res.status(500).json(err);
+    return res.status(500).json(err);
   }
 });
 
 router.post("/login", async (req, res) => {
   try {
-    const userData = await User.findOne({ where: { email: req.body.email } });
+    const userData = await User.findOne({
+      where: { email: req.body.email.toLowerCase() },
+    });
 
     if (!userData) {
       res.status(400).json({ message: "Incorrect email" });
@@ -46,7 +57,7 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json(err);
+    return res.status(500).json(err);
   }
 });
 
