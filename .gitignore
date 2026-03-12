@@ -12,6 +12,7 @@ yarn.lock
 *.db
 *.sqlite
 *.sqlite3
+!database.sqlite
 
 # IDE
 .vscode/
