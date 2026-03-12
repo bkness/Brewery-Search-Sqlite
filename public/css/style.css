@@ -1,114 +1,121 @@
 body {
-    background: linear-gradient(to right, #aafca1, #4caf50);
+  background: linear-gradient(to right, #aafca1, #4caf50);
 }
 
 h1,
 h5 {
-    font-family: 'Lobster';
+  font-family: "Lobster";
 }
 
 .card-title {
-    text-align: center;
+  text-align: center;
 }
 
 #searchButton {
-    width: 50%;
+  width: 50%;
 }
 
 .header-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-} 
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
 
- nav {
-    display: flex;
-    align-items: center; 
+nav {
+  display: flex;
+  align-items: center;
 }
 
 .login-btn,
 .mypubs-btn,
 .home-btn {
-    margin-left: 13px; 
-    font-size: 1.4rem;
+  margin-left: 13px;
+  font-size: 1.4rem;
 }
 
 .logout-btn {
-    font-size: 1.4rem;
+  font-size: 1.4rem;
+}
+
+.error-message {
+  display: none;
+  color: #b00020;
+  background: #ffe6e6;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
 }
 
 .card {
-    height: 350px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 350px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 ˝ #deletebrewery {
-    background-color: red;
-    border-color: red;
+  background-color: red;
+  border-color: red;
 }
 
 #pubcomment {
-    border-radius: 5px;
+  border-radius: 5px;
 }
 
 #mybrewlist {
-    height: 280px;
-    margin-top: 15px;
-    padding: 10px;
+  height: 280px;
+  margin-top: 15px;
+  padding: 10px;
 }
 
 #map {
-    height: 350px;
+  height: 350px;
 }
 
 #search-container {
-    margin-top: 55px;
-    height: 165px;
+  margin-top: 55px;
+  height: 165px;
 }
 
 .brewery-template {
-    text-align: center;
-    width: 100%;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    background-color: white;
-    padding: 15px;
-    overflow-wrap: break-word; 
+  text-align: center;
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  background-color: white;
+  padding: 15px;
+  overflow-wrap: break-word;
 }
 
 #search-container {
-    margin-top: 55px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 55px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 #saveButton {
-    width: 30%;
-    position: row;
+  width: 30%;
+  position: row;
 }
 
 #mapbtn {
-    width: 30%;
-    background-color: green;
-    border-color: green;
+  width: 30%;
+  background-color: green;
+  border-color: green;
 }
 
-
 @media (max-width: 600px) {
-     
-    .header-container {
-        flex-direction: column;
-        align-items: center;
-    }
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    nav {
-        display: flex;
-        justify-content: center;
-        flex-direction: row;
-        margin: 0;
-    }
-
+  nav {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    margin: 0;
+  }
 }

@@ -3,6 +3,8 @@
 
     <h2>Login</h2>
 
+    <div id="loginError" class="error-message"></div>
+
     <label>Email:</label>
     <p><input
         type="text"
@@ -20,13 +22,16 @@
         placeholder="User Password"
       /></p>
 
-    <p><button type="submit" id="loginSubmit">Login</button></p>
+    <p><button type="button" id="loginSubmit">Login</button></p>
   </div>
 </div>
 
 <div class="container">
   <div class="col-sm-3">
     <h2>Sign Up</h2>
+
+    <div id="signupError" class="error-message"></div>
+
     <label for="name">Username:</label>
     <p><input
         type="text"

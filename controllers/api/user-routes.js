@@ -13,7 +13,6 @@ router.post("/", async (req, res) => {
     req.session.save(() => {
       req.session.user_id = userData.id;
       req.session.logged_in = true;
-
       res.status(200).json(userData);
     });
   } catch (err) {
@@ -39,14 +38,13 @@ router.post("/login", async (req, res) => {
     });
 
     if (!userData) {
-      res.status(400).json({ message: "Incorrect email" });
-      return;
+      return res.status(400).json({ message: "Incorrect email" });
     }
+
     const validPassword = await userData.checkPassword(req.body.password);
 
     if (!validPassword) {
-      res.status(400).json({ message: "Incorrect password" });
-      return;
+      return res.status(400).json({ message: "Incorrect password" });
     }
 
     req.session.save(() => {
