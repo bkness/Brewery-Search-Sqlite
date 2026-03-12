@@ -1,0 +1,42 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 col-lg-3">
+            <div class="card" id="search-container">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="searchText">Search by City:</label>
+                        <input type="text" class="form-control" id="searchText" name="city">
+                        <button type="button" class="btn btn-primary mt-3" id="searchButton">Search</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body" id="map">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Local Breweries</h5>
+                    {{#each apiData as |brewery|}}
+                        <div class="brewery-template border" >                       
+                                <!-- {{brewery.id}} -->
+                            <p><strong>{{brewery.name}}</strong> <i>({{brewery.brewery_type}})</i></p>
+                            <p>Address:</p>
+                            <p>{{brewery.address_1}} {{brewery.city}} {{brewery.state}} {{brewery.type}}</p>
+                            <p><i>Phone:</i></p>
+                            <p>+1{{brewery.phone}}</p>
+                            <a href="{{brewery.website_url}}" target="_blank">{{brewery.website_url}}</a></p>
+                            <button type="button" class="btn btn-primary mt-3 btn-save-brewery" id="saveButton" data-index="{{brewery.id}}">Save</button>
+                            <button type="button" class="btn btn-primary mt-3 btn-map-brewery" id="mapbtn" data-index="{{brewery.id}}">Save</button>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>  
+    
+    
+<script src="/js/homepage.js"></script>

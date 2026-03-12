@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Local Breweries!</title>
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  {{!--
+  <link rel="stylesheet" href="/css/jass.css"> --}}
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Lora&family=Zen+Maru+Gothic:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <header class="header-container">
+      <h1>
+        <span role="img" aria-label="beer">🍺</span>
+        <a href="/" class="local-brew">Local Breweries</a>
+      </h1>
+      <nav>
+        <!-- Conditionally render login or logout links -->
+        <a href="/" class="home-btn">Home</a>
+        {{#if logged_in}}
+        <a href="/api/breweries" class="mypubs-btn">My Pubs</a>
+        <button class="logout-btn btn btn-link" id="logout">Logout</button>
+        {{else}}
+        <a href="/login" class="login-btn">Login</a>
+        {{/if}}
+      </nav>
+    </header>
+    <main class="container mt-5">
+      <!-- Render the sub layout -->
+      {{{ body }}}
+    </main>
+    <footer>
+      <!-- Your footer content here -->
+    </footer>
+  </div>
+
+  <!-- Bootstrap JS and Popper.js -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Render script for logged in users only -->
+  {{#if logged_in}}
+  <script src="/js/logout.js"></script>
+  {{/if}}
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 col-lg-3">
+            <div class="card" id="search-container">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="searchText">Search by City:</label>
+                        <input type="text" class="form-control" id="searchText" name="city">
+                        <button type="button" class="btn btn-primary mt-3" id="searchButton">Search</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body" id="map"></div>
+            </div>
+            <p><i>**Some map data may not be available</i></p>
+        </div>
+        <div class="col-md-9">
+
+            <div class="card-body">
+                <h5 class="card-title">Local Breweries</h5>
+                {{#each apiData as |brewery|}}
+                <div class="brewery-template border">
+                    <!-- {{brewery.id}} -->
+                    <p><strong>{{brewery.name}}</strong> <i>({{brewery.brewery_type}})</i></p>
+                    <p>{{brewery.address_1}} {{brewery.city}} {{brewery.state}} {{brewery.type}}</p>
+                    {{#if brewery.phone}}
+                    <p>Phone: <a href="tel:1+{{brewery.phone}}">+1{{brewery.phone}}</a></p>
+                    {{else}}
+                    <p class="no-phone"><i>No phone number available</i></p>
+                    {{/if}}
+                    {{#if brewery.website_url}}
+                    <a href="{{brewery.website_url}}" target="_blank">{{brewery.website_url}}</a></p>
+                    {{else}}
+                    <p class="-no-website"><i>No website available</i></p>
+                    {{/if}}
+                    <button type="button" class="btn btn-primary mt-3 btn-save-brewery" id="saveButton"
+                        data-index="{{brewery.id}}">Save</button>
+                    {{#if brewery.longitude}}
+                    {{#if brewery.latitude}}
+                    <button type="button" class="btn btn-primary mt-3 btn-map-brewery" id="mapbtn"
+                        data-index="{{brewery.id}}">Map</button>
+                    {{/if}}
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+
+<script src="/js/homepage.js" type="text/javascript"></script>

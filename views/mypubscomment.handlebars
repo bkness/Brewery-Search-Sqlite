@@ -1,0 +1,50 @@
+<div class="blog-card">
+  <div class="blog-card-header">
+    <h2>{{breweries.name}}</h2>
+  </div>
+  <div class="card-body">
+    <p>
+      <b>Address:</b></br>
+      {{breweries.address}}</br>
+      {{breweries.city}} {{breweries.State}}, {{breweries.zipcode}}
+    </p>
+    <p>
+      <b>Type of Brewery:</b></br>
+      {{breweries.remark}}
+    </p>
+    <p>
+      <b>Phone:</b></br>
+      {{#if breweries.Phone}}
+      <a href="tel:1+{{breweries.Phone}}">+1{{breweries.Phone}}</a>
+      {{else}}
+      <p class="no-phone"><i>No phone number available</i></p>
+      {{/if}}
+    </p>
+    <p>
+        <b>Website:</b><br>
+      {{#if breweries.Website}}
+      <a href="{{breweries.Website}}" target="_blank">{{breweries.Website}}</a>
+      {{else}}
+      <p class="-no-website"><i>No website available</i></p>
+      {{/if}}
+    </p>
+    <p>
+      <label id="brewid" hidden="hidden"> {{breweries.id}} </label>
+    </p>
+    <div class="pubcomment">
+      <label for="pubdesc">Comment:</label></br>
+      <textarea class="input" style="width: 75%; height: 50px" id="pubcomment"></textarea></br>
+      <button id="pubcommentsubmit" type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    </br>
+    </br>
+    </br>
+    <div>
+      <button id="deletebrewery" type="submit" class="btn btn-primary">Remove Brewery</button> </br>
+      ** If you no longer want to keep this brewery in your list of breweries you can remove it.
+    </div>
+  </div>
+</div>
+
+
+<script src="/js/mypubscomment.js"></script>
