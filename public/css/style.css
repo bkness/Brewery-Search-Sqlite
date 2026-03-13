@@ -39,23 +39,37 @@ nav {
   font-size: 1.4rem;
 }
 
-.error-message {
-  display: none;
-  color: #b00020;
-  background: #ffe6e6;
-  padding: 8px 12px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
+input.valid {
+  border: 2px solid #22c55e;
+  background: #f0fdf4;
+}
+
+input.invalid {
+  border: 2px solid #ef4444;
+  background: #fef2f2;
+}
+
+.error-message {
+  color: #ef4444;
+  margin-bottom: 10px;
+  display: none;
+}
+
+.error-message.show {
+  display: block;
+}
 .card {
   height: 350px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-˝ #deletebrewery {
+in ˝ #deletebrewery {
   background-color: red;
   border-color: red;
 }
