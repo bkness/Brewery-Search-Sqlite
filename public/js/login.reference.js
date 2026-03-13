@@ -38,7 +38,7 @@ const sendRequest = async (url, body) => {
   } catch {
     return {
       ok: false,
-      data: { message: "Unable to reach server." },
+      data: { message: "Unable to reach server. Try again." },
     };
   }
 };
@@ -60,14 +60,12 @@ const createFormController = ({
 
   const getValues = () =>
     Object.fromEntries(
-      Object.entries(inputs).map(([k, el]) => [k, el.value.trim()]),
+      Object.entries(inputs).map(([key, el]) => [key, el.value.trim()]),
     );
 
   const validateForm = () => {
     const values = getValues();
-    const message =
-      validate(values) ||
-      (isValidEmail(values.email) === false && "Please enter a valid email");
+    const message = validate(values);
 
     if (message) {
       showError(error, message);
@@ -78,41 +76,43 @@ const createFormController = ({
     return true;
   };
 
-  Object.values(inputs).forEach((input) =>
-    input.addEventListener("input", validateForm),
-  );
+  Object.values(inputs).forEach((input) => {
+    input.addEventListener("input", validateForm);
+  });
 
-  formEl.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  formEl.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
     if (!validateForm()) return;
 
-    const button = formEl.querySelector("button[type='submit']");
-    const originalText = button.textContent;
+    const submitBtn = formEl.querySelector("button[type='submit']");
+    const originalText = submitBtn.textContent;
 
-    button.disabled = true;
-    button.textContent = "Processing...";
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Processing...";
 
     const result = await sendRequest(endpoint, getValues());
 
-    button.disabled = false;
-    button.textContent = originalText;
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
 
     if (result.ok) {
       document.location.replace("/");
       return;
     }
 
-    showError(error, result.data?.message || "Request failed");
+    showError(error, result.data?.message || "Request failed.");
 
-    inputs.password.focus();
+    if (inputs.password) {
+      inputs.password.value = "";
+      inputs.password.focus();
+    }
   });
 };
 
 // Login Form Setup
 createFormController({
   form: "#loginForm",
-
   fields: {
     email: "#loginName",
     password: "#loginPassword",
@@ -120,17 +120,10 @@ createFormController({
   errorEl: "#loginError",
   endpoint: "/api/user/login",
   validate: ({ email, password }) => {
-    if (!isValidEmail(email)) return "Please enter a valid email address";
-    if (!password) return "Please enter your password";
+    if (!isValidEmail(email)) return "Please enter a valid email address.";
+    if (!password) return "Please enter your password.";
   },
 });
-
-const setFieldState = (field, isValid) => {
-  field.classList.remove("valid", "invalid");
-
-  if (isValid === true) field.classList.add("valid");
-  if (isValid === false) field.classList.add("invalid");
-};
 
 // Signup Form Setup
 createFormController({
@@ -143,16 +136,18 @@ createFormController({
   errorEl: "#signupError",
   endpoint: "/api/user",
   validate: ({ name, email, password }) => {
-    if (name.length < 3) return "Username must be at least 3 characters";
-    if (!isValidEmail(email)) return "Please enter a valid email";
-    if (password.length < 6) return "Password must be at least 6 characters";
+    if (name.length < 3) return "Username must be at least 3 characters long.";
+    if (!isValidEmail(email)) return "Please enter a valid email address.";
+    if (password.length < 8)
+      return "Password must be at least 8 characters long.";
   },
 });
 
 // Password Toggle
 $$(".toggle-pass").forEach((button) => {
   button.addEventListener("click", () => {
-    const field = $(button.dataset.target);
+    const targetSelector = button.dataset.target;
+    const field = $(targetSelector);
     if (!field) return;
 
     field.type = field.type === "password" ? "text" : "password";
