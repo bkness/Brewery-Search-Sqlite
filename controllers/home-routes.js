@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/citySearch/:searchCity", withAuth, async (req, res) => {
+router.get("/citySearch/:searchCity", async (req, res) => {
   try {
     //console.log(req.params.searchCity);
     const brewUrl = `https://api.openbrewerydb.org/v1/breweries?by_city=${req.params.searchCity}`;
