@@ -1,84 +1,104 @@
-<div class="container">
-  <div class="col-sm-3" id="loginPanel">
-    <form id="loginForm">
-      <h2>Login</h2>
+<div class="login-page">
+  <h1>Welcome to Brewery Search!</h1>
+  <p>Please log in or sign up to continue.</p>
+  <div class="container">
+    <div class="col-sm-6 col-md-4" id="loginPanel">
+      <form id="loginForm">
+        <h2>Login</h2>
 
-      <div id="loginError" class="error-message"></div>
+        <div id="loginError" class="error-message" aria-live="polite"></div>
 
-      <label>Email:</label>
-      <p>
-        <input
-          type="email"
-          id="loginName"
-          name="email"
-          placeholder="User Email"
-        />
-      </p>
+        <div class="form-group">
+          <input
+            type="email"
+            id="loginName"
+            name="email"
+            placeholder=" "
+            autocomplete="email"
+            required
+          />
+          <label for="loginName">Email:</label>
+        </div>
 
-      <label>Password:</label>
-      <p>
-        <input
-          type="password"
-          id="loginPassword"
-          name="password"
-          placeholder="User Password"
-        />
-        <button
-          type="button"
-          class="toggle-pass"
-          data-target="#loginPassword"
-        >Show</button>
-      </p>
+        <div class="form-group password-group">
+          <input
+            type="password"
+            id="loginPassword"
+            name="password"
+            placeholder=" "
+            autocomplete="current-password"
+            required
+          />
+          <label for="loginPassword">Password:</label>
+          <button
+            type="button"
+            class="toggle-pass"
+            data-target="#loginPassword"
+          >Show</button>
+        </div>
 
-      <p><button type="submit" id="loginSubmit">Login</button></p>
-    </form>
+        <div class="form-group form-actions"><button
+            type="submit"
+            id="loginSubmit"
+          >Login</button></div>
+      </form>
+    </div>
   </div>
-</div>
 
-<div class="container">
-  <div class="col-sm-3">
-    <form id="signupForm">
-      <h2>Sign Up</h2>
+  <div class="container">
+    <div class="col-sm-6 col-md-4">
+      <form id="signupForm">
+        <h2>Sign Up</h2>
 
-      <div id="signupError" class="error-message"></div>
+        <div id="signupError" class="error-message" aria-live="polite"></div>
 
-      <label>Username:</label>
-      <p>
-        <input
-          type="text"
-          id="createName"
-          name="name"
-          placeholder="Ex: bugle212"
-        />
-      </p>
+        <div class="form-group">
+          <input
+            type="text"
+            id="createName"
+            name="name"
+            placeholder=" "
+            autocomplete="username"
+            required
+          />
+          <label for="createName">Username:</label>
+        </div>
 
-      <label>Email:</label>
-      <p>
-        <input
-          type="email"
-          id="createEmail"
-          name="email"
-          placeholder="Your Email"
-        />
-      </p>
+        <div class="form-group">
+          <input
+            type="email"
+            id="createEmail"
+            name="email"
+            placeholder=" "
+            autocomplete="email"
+            required
+          />
+          <label for="createEmail">Email:</label>
+        </div>
 
-      <label>Password:</label>
-      <p>
-        <input
-          type="password"
-          id="createPassword"
-          name="password"
-          placeholder="Must be 6 characters"
-        />
-        <button
-          type="button"
-          class="toggle-pass"
-          data-target="#createPassword"
-        >Show</button>
-      </p>
+        <div class="form-group password-group">
+          <input
+            type="password"
+            id="createPassword"
+            name="password"
+            placeholder=" "
+            autocomplete="new-password"
+            required
+          />
+          <label for="createPassword">Password:</label>
+          <button
+            type="button"
+            class="toggle-pass"
+            data-target="#createPassword"
+          >Show</button>
+        </div>
 
-      <p><button type="submit" id="signupSubmit">Sign Up</button></p>
-    </form>
+        <div class="form-group form-actions"><button
+            type="submit"
+            id="signupSubmit"
+          >Sign Up</button></div>
+      </form>
+    </div>
   </div>
 </div>
 

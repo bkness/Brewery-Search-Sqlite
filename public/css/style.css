@@ -17,14 +17,87 @@ h5 {
 
 .header-container {
   display: flex;
-  flex-direction: row;
+  /* flex-direction: row; */
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 15px 25px;
+  flex-wrap: wrap;
 }
+
+/* .container {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+} */
 
 nav {
   display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logged-indicator {
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2d6a4f;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.form-group label {
+  position: absolute;
+  left: 12px;
+  top: 14px;
+  background: white;
+  padding: 0 4px;
+  color: #777;
+  font-size: 14px;
+  transition: 0.2s ease;
+  pointer-events: none;
+}
+
+.form-group input:focus {
+  outline: none !important;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label {
+  top: -8px;
+  font-size: 12px;
+  color: #4f46e5;
+}
+
+.toggle-pass {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  padding: 4px;
+  border-radius: 6px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 14px;
+  color: #777;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -69,7 +142,7 @@ input.invalid {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-in ˝ #deletebrewery {
+#deletebrewery {
   background-color: red;
   border-color: red;
 }
@@ -111,7 +184,6 @@ in ˝ #deletebrewery {
 
 #saveButton {
   width: 30%;
-  position: row;
 }
 
 #mapbtn {

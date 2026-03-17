@@ -33,8 +33,10 @@ const sendRequest = async (url, body) => {
       headers: { "Content-Type": "application/json" },
     });
 
-    const data = await readJsonSafe(response);
-    return { ok: response.ok, data };
+    return {
+      ok: response.ok,
+      data: await readJsonSafe(response),
+    };
   } catch {
     return {
       ok: false,
@@ -52,22 +54,27 @@ const createFormController = ({
   endpoint,
 }) => {
   const formEl = $(form);
-  const error = $(errorEl);
+  if (!formEl) return;
+  const error = $(errorEl) || {
+    textContent: "",
+    classList: { add: () => {}, remove: () => {} },
+  };
 
   const inputs = Object.fromEntries(
-    Object.entries(fields).map(([key, selector]) => [key, $(selector)]),
+    Object.entries(fields).map(([key, selector]) => [
+      key,
+      formEl.querySelector(selector),
+    ]),
   );
 
   const getValues = () =>
     Object.fromEntries(
-      Object.entries(inputs).map(([k, el]) => [k, el.value.trim()]),
+      Object.entries(inputs).map(([k, el]) => [k, el?.value.trim() || ""]),
     );
 
   const validateForm = () => {
     const values = getValues();
-    const message =
-      validate(values) ||
-      (isValidEmail(values.email) === false && "Please enter a valid email");
+    const message = validate(values);
 
     if (message) {
       showError(error, message);
@@ -78,9 +85,30 @@ const createFormController = ({
     return true;
   };
 
-  Object.values(inputs).forEach((input) =>
-    input.addEventListener("input", validateForm),
-  );
+  Object.values(inputs).forEach((input) => {
+    if (!input) return;
+    input.addEventListener("input", validateForm);
+  });
+
+  let activeInput = null;
+
+  Object.values(inputs).forEach((input) => {
+    if (!input) return;
+
+    input.addEventListener("focus", () => {
+      activeInput = input;
+    });
+  });
+
+  formEl.addEventListener("focusout", (e) => {
+    if (!activeInput) return;
+
+    const currentGroup = activeInput.closest(".form-group");
+    if (currentGroup?.contains(e.target)) return;
+
+    clearError(error);
+    activeInput = null;
+  });
 
   formEl.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -96,16 +124,23 @@ const createFormController = ({
     const result = await sendRequest(endpoint, getValues());
 
     button.disabled = false;
-    button.textContent = originalText;
+
+    if (!result.ok) {
+      button.textContent = "Try Again";
+    }
 
     if (result.ok) {
-      document.location.replace("/");
+      button.textContent = "Success!";
+
+      setTimeout(() => {
+        document.location.replace("/");
+      }, 300);
       return;
     }
 
     showError(error, result.data?.message || "Request failed");
 
-    inputs.password.focus();
+    inputs.password?.focus();
   });
 };
 
@@ -124,13 +159,6 @@ createFormController({
     if (!password) return "Please enter your password";
   },
 });
-
-const setFieldState = (field, isValid) => {
-  field.classList.remove("valid", "invalid");
-
-  if (isValid === true) field.classList.add("valid");
-  if (isValid === false) field.classList.add("invalid");
-};
 
 // Signup Form Setup
 createFormController({
