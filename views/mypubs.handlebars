@@ -1,16 +1,51 @@
-{{#each breweries as |brewery| }}
-  <div class="brewery-template" id="mybrewlist" style="width: 100%;">
-    <p> <h3>{{brewery.name}}</h3></p>
-    <p> {{brewery.address}}</p>
-    <p> {{brewery.city}} {{brewery.State}}, {{brewery.zipcode}}</p> 
-    <p><h4> {{brewery.Remark}} </h4></p> 
-    <p><h6> {{brewery.comments}} </h6> </p> 
-    <div class="reviewcomment">
-              <a href="breweries/singlebrewery/{{brewery.id}}">Comment</a>  
-    </div> 
-    <button type="button" class="btn btn-primary mt-3 btn-delete-brewery" id="deletebtn" data-index="{{brewery.id}}">Remove Brewery</button>
-  </div>       
-{{/each}}
+<section class='results-section mypubs-section'>
+  <div class='results-header'><h2>My Saved Pubs</h2></div>
 
+  <div class='brewery-grid mypubs-grid'>
+    {{#each breweries as |brewery|}}
+      <article class='brewery-card mypub-card' data-id='{{brewery.id}}'>
+        <div class='card-top'>
+          <h2>{{brewery.name}}</h2>
+          {{#if brewery.remark}}<span class='badge'>{{brewery.remark}}</span>{{/if}}
+        </div>
 
-<script src="/js/mypubs.js"></script>
+        <h5 class='location'>{{brewery.address}}</h5>
+        <h5 class='location'>{{brewery.city}}, {{brewery.state}} {{brewery.zipcode}}</h5>
+
+        {{#if brewery.phone}}
+          <h5 class='location'><a href='tel:+1{{brewery.phone}}'>{{brewery.phone}}</a></h5>
+        {{/if}}
+
+        {{#if brewery.website}}
+          <a
+            href='{{brewery.website}}'
+            target='_blank'
+            rel='noopener noreferrer'
+            class='visit-btn'
+          >Visit Website</a>
+        {{/if}}
+
+        {{#if brewery.comments}}
+          <h3 class='location'>{{brewery.comments}}</h3>
+        {{/if}}
+
+        <div class='mypub-actions'>
+          <a href='/api/breweries/singlebrewery/{{brewery.id}}' class='save-btn'>Comment</a>
+
+          {{#if brewery.latitude}}
+            <button
+              type='button'
+              class='save-btn btn-map-saved'
+              data-id='{{brewery.id}}'
+              data-lat='{{brewery.latitude}}'
+              data-lng='{{brewery.longitude}}'
+            >View Map</button>
+          {{/if}}
+
+          <button type='button' class='save-btn btn-delete-brewery' data-id='{{brewery.id}}'>Remove
+            Brewery</button>
+        </div>
+      </article>
+    {{/each}}
+  </div>
+</section>
