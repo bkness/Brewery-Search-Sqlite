@@ -8,20 +8,19 @@ router.get('/', withAuth, async (req, res) => {
     const brewData = await Breweries.findAll({
       include: [
         {
-          model: User
+          model: User,
         },
       ],
       where: {
         user_id: req.session.user_id,
       },
     });
-    const breweries = brewData.map((brewery) =>
-      brewery.get({ plain: true })
-    );
-    //res.json(breweries);  
+
+    const breweries = brewData.map((brewery) => brewery.get({ plain: true }));
+    //res.json(breweries);
     res.render('mypubs', {
       breweries,
-      logged_in: true
+      logged_in: true,
     });
   } catch (err) {
     console.log(err);
@@ -29,22 +28,21 @@ router.get('/', withAuth, async (req, res) => {
   }
 });
 
-
 // GET one breweries
 router.get('/singlebrewery/:id', async (req, res) => {
   try {
     const brewData = await Breweries.findByPk(req.params.id, {
       include: [
         {
-          model: User
+          model: User,
         },
       ],
     });
     const breweries = brewData.get({ plain: true });
-    //res.json(breweries); 
+    //res.json(breweries);
     res.render('mypubscomment', {
       breweries,
-      logged_in: true
+      logged_in: true,
     });
   } catch (err) {
     console.log(err);
@@ -56,17 +54,16 @@ router.post('/addbrewery/', withAuth, async (req, res) => {
   console.log('in post');
   console.log(req.body);
 
-
   try {
     const dbbrewData = await Breweries.create({
       refid: req.body.refid,
       name: req.body.brewname,
       address: req.body.address,
       city: req.body.city,
-      State: req.body.state,
-      zipcode: req.body.zipcode,
-      Phone: req.body.phone,
-      Website: req.body.website,
+      state: req.body.state,
+      zipcode: req.body.zipcode || req.body.zip || '',
+      phone: req.body.phone,
+      website: req.body.website,
       latitude: req.body.latitude,
       longitude: req.body.longitude,
       remark: req.body.remark,
@@ -86,7 +83,7 @@ router.put('/:id', withAuth, (req, res) => {
   //Calls the update method on the Book model
   Breweries.update(
     {
-      comments: req.body.comment
+      comments: req.body.comment,
     },
     {
       where: {
@@ -94,11 +91,11 @@ router.put('/:id', withAuth, (req, res) => {
       },
     }
   )
-    .then((Breweries) => {
-      //res.json(Breweries);
+    .then((updatedBreweries) => {
+      //res.json(updatedBreweries);
       res.render('mypubs', {
-        Breweries,
-        logged_in: true
+        Breweries: updatedBreweries,
+        logged_in: true,
       });
     })
     .catch((err) => {
@@ -106,7 +103,6 @@ router.put('/:id', withAuth, (req, res) => {
       res.json(err);
     });
 });
-
 
 router.delete('/:id', withAuth, async (req, res) => {
   try {

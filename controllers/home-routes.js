@@ -1,25 +1,25 @@
-const router = require("express").Router();
-const { Breweries, User } = require("../models");
-const withAuth = require("../utils/auth");
+const router = require('express').Router();
+const { Breweries } = require('../models');
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const postData = await Breweries.findAll({
-      include: [User],
-    });
+    let savedIds = [];
+    if (req.session.logged_in && req.session.user_id) {
+      const savedBreweries = await Breweries.findAll({
+        attributes: ['refid'],
+        where: { user_id: req.session.user_id },
+      });
+      savedIds = savedBreweries.map((brewery) => brewery.refid);
+    }
 
-    const brewery = postData.map((brewery) => brewery.get({ plain: true })); // session of object is global to backend
-
-    const breweryData = await fetch(
-      "https://api.openbrewerydb.org/v1/breweries?by_city=phoenix",
-    );
+    const breweryData = await fetch('https://api.openbrewerydb.org/v1/breweries?by_city=phoenix');
     const apiData = await breweryData.json();
 
-    // console.log(apiData)
+    console.log(apiData);
 
-    // res.json(apiData)
-    res.render("homepage", {
+    res.render('homepage', {
       apiData,
+      savedIds,
       logged_in: req.session.logged_in,
     });
   } catch (err) {
@@ -28,18 +28,33 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/citySearch/:searchCity", async (req, res) => {
+router.get('/search', async (req, res) => {
   try {
-    //console.log(req.params.searchCity);
-    const brewUrl = `https://api.openbrewerydb.org/v1/breweries?by_city=${req.params.searchCity}`;
-    const breweryData = await fetch(brewUrl);
-    const apiData = await breweryData.json();
+    const { city, state, name } = req.query;
+    let savedIds = [];
 
-    //console.log('hi')
+    if (req.session.logged_in && req.session.user_id) {
+      const savedBreweries = await Breweries.findAll({
+        attributes: ['refid'],
+        where: { user_id: req.session.user_id },
+      });
+      savedIds = savedBreweries.map((brewery) => brewery.refid);
+    }
 
-    //res.json(apiData)
-    res.render("homepage", {
+    let query = 'https://api.openbrewerydb.org/v1/breweries?';
+
+    if (city) query += `by_city=${encodeURIComponent(city)}&`;
+    if (state) query += `by_state=${encodeURIComponent(state)}&`;
+    if (name) query += `by_name=${encodeURIComponent(name)}&`;
+
+    const response = await fetch(query);
+    const apiData = await response.json();
+
+    console.log(apiData);
+
+    res.render('homepage', {
       apiData,
+      savedIds,
       logged_in: req.session.logged_in,
     });
   } catch (err) {
@@ -48,12 +63,12 @@ router.get("/citySearch/:searchCity", async (req, res) => {
   }
 });
 
-router.get("/login", (req, res) => {
+router.get('/login', (req, res) => {
   if (req.session.logged_in) {
-    res.redirect("/");
+    res.redirect('/');
     return;
   }
-  res.render("login");
+  res.render('login');
 });
 
 module.exports = router;

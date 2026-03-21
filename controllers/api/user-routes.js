@@ -1,13 +1,20 @@
-const router = require("express").Router();
-const { User } = require("../../models");
+const router = require('express').Router();
+const { User } = require('../../models');
 
-router.post("/", async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    // console.log(req.body)
+    const name = req.body?.name?.trim();
+    const email = req.body?.email?.trim().toLowerCase();
+    const password = req.body?.password;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
     const userData = await User.create({
-      name: req.body.name,
-      email: req.body.email.toLowerCase(),
-      password: req.body.password,
+      name,
+      email,
+      password,
     });
 
     req.session.save(() => {
@@ -17,35 +24,42 @@ router.post("/", async (req, res) => {
       res.status(200).json(userData);
     });
   } catch (err) {
-    if (err.name === "SequelizeUniqueConstraintError") {
+    if (err.name === 'SequelizeUniqueConstraintError') {
       const field = err.errors[0].path;
 
-      if (field === "email") {
-        return res.status(400).json({ message: "Email already exists" });
+      if (field === 'email') {
+        return res.status(400).json({ message: 'Email already exists' });
       }
-      if (field === "name") {
-        return res.status(400).json({ message: "Username already exists" });
+      if (field === 'name') {
+        return res.status(400).json({ message: 'Username already exists' });
       }
     }
     console.error(err);
-    return res.status(500).json(err);
+    return res.status(500).json({ message: 'Signup failed' });
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
+    const email = req.body?.email?.trim().toLowerCase();
+    const password = req.body?.password;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Please enter email and password' });
+    }
+
     const userData = await User.findOne({
-      where: { email: req.body.email.toLowerCase() },
+      where: { email },
     });
 
     if (!userData) {
-      return res.status(400).json({ message: "Incorrect email" });
+      return res.status(400).json({ message: 'Incorrect email' });
     }
 
-    const validPassword = await userData.checkPassword(req.body.password);
+    const validPassword = await userData.checkPassword(password);
 
     if (!validPassword) {
-      return res.status(400).json({ message: "Incorrect password" });
+      return res.status(400).json({ message: 'Incorrect password' });
     }
 
     req.session.save(() => {
@@ -53,15 +67,15 @@ router.post("/login", async (req, res) => {
       req.session.logged_in = true;
       req.session.username = userData.name;
 
-      res.status(200).json({ User: userData, message: "Login successful" });
+      res.status(200).json({ User: userData, message: 'Login successful' });
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json(err);
+    return res.status(500).json({ message: 'Login failed' });
   }
 });
 
-router.post("/logout", (req, res) => {
+router.post('/logout', (req, res) => {
   if (req.session.logged_in) {
     req.session.destroy(() => {
       res.status(204).end();

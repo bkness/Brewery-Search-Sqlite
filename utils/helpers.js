@@ -1,17 +1,32 @@
 function checkId(id) {
-    return id;
+  return id;
 }
 
-function checkCoordinates(longitude, operator, latitude) {
-    return longitude && latitude;
-};
+function includes(array, value) {
+  return Array.isArray(array) && array.includes(value);
+}
+
+function checkCoordinates(longitude, latitude) {
+  return !!longitude && !!latitude;
+}
 
 function checkPhone(phone) {
-    return phone;
+  return phone;
 }
 
 function checkWebsite(website) {
-    return website;
+  return website;
 }
 
-module.exports = { checkId, checkCoordinates, checkPhone, checkWebsite }
+function isSaved(refid, savedRefIds) {
+  return Array.isArray(savedRefIds) && savedRefIds.includes(refid);
+}
+
+module.exports = {
+  checkId,
+  includes,
+  checkCoordinates,
+  checkPhone,
+  checkWebsite,
+  isSaved,
+};
