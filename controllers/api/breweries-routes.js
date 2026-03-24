@@ -1,125 +1,69 @@
-const router = require('express').Router();
-const { Breweries, User } = require('../../models');
-const withAuth = require('../../utils/auth');
+const router = require("express").Router();
+const { User } = require("../../models");
 
-// GET all breweries
-router.get('/', withAuth, async (req, res) => {
+// SIGNUP
+router.post("/", async (req, res) => {
   try {
-    const brewData = await Breweries.findAll({
-      include: [
-        {
-          model: User,
-        },
-      ],
-      where: {
-        user_id: req.session.user_id,
-      },
-    });
+    const name = req.body?.name?.trim();
+    const email = req.body?.email?.trim().toLowerCase();
+    const password = req.body?.password;
 
-    const breweries = brewData.map((brewery) => brewery.get({ plain: true }));
-    //res.json(breweries);
-    res.render('mypubs', {
-      breweries,
-      logged_in: true,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json(err);
-  }
-});
-
-// GET one breweries
-router.get('/singlebrewery/:id', async (req, res) => {
-  try {
-    const brewData = await Breweries.findByPk(req.params.id, {
-      include: [
-        {
-          model: User,
-        },
-      ],
-    });
-    const breweries = brewData.get({ plain: true });
-    //res.json(breweries);
-    res.render('mypubscomment', {
-      breweries,
-      logged_in: true,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json(err);
-  }
-});
-
-router.post('/addbrewery/', withAuth, async (req, res) => {
-  console.log('in post');
-  console.log(req.body);
-
-  try {
-    const dbbrewData = await Breweries.create({
-      refid: req.body.refid,
-      name: req.body.brewname,
-      address: req.body.address,
-      city: req.body.city,
-      state: req.body.state,
-      zipcode: req.body.zipcode || req.body.zip || '',
-      phone: req.body.phone,
-      website: req.body.website,
-      latitude: req.body.latitude,
-      longitude: req.body.longitude,
-      remark: req.body.remark,
-      comments: req.body.comment,
-      created_date: req.body.currentDate,
-      user_id: req.session.user_id,
-    });
-    res.status(200).json(dbbrewData);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json(err);
-  }
-});
-
-// Updates breweries comment on its id
-router.put('/:id', withAuth, (req, res) => {
-  //Calls the update method on the Book model
-  Breweries.update(
-    {
-      comments: req.body.comment,
-    },
-    {
-      where: {
-        id: req.params.id,
-      },
-    }
-  )
-    .then((updatedBreweries) => {
-      //res.json(updatedBreweries);
-      res.render('mypubs', {
-        Breweries: updatedBreweries,
-        logged_in: true,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.json(err);
-    });
-});
-
-router.delete('/:id', withAuth, async (req, res) => {
-  try {
-    const brewData = await Breweries.destroy({
-      where: {
-        id: req.params.id,
-      },
-    });
-
-    if (!brewData) {
-      res.status(404).json({ message: 'No brewery found with that id!' });
-      return;
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    res.status(200).json(brewData);
+    const userData = await User.create({ name, email, password });
+
+    req.session.save(() => {
+      req.session.user_id = userData.id;
+      req.session.username = userData.name;
+      req.session.logged_in = true;
+      res.status(200).json(userData);
+    });
   } catch (err) {
-    res.status(500).json(err);
+    if (err.name === "SequelizeUniqueConstraintError") {
+      return res.status(400).json({ message: "Email or username already exists" });
+    }
+    console.error(err);
+    res.status(500).json({ message: "Signup failed" });
+  }
+});
+
+// LOGIN
+router.post("/login", async (req, res) => {
+  try {
+    const email = req.body?.email?.trim().toLowerCase();
+    const password = req.body?.password;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Please enter email and password" });
+    }
+
+    const userData = await User.findOne({ where: { email } });
+    if (!userData) return res.status(400).json({ message: "Incorrect email" });
+
+    const validPassword = await userData.checkPassword(password);
+    if (!validPassword) return res.status(400).json({ message: "Incorrect password" });
+
+    req.session.save(() => {
+      req.session.user_id = userData.id;
+      req.session.username = userData.name;
+      req.session.logged_in = true;
+
+      res.status(200).json({ message: "Login successful" });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Login failed" });
+  }
+});
+
+// LOGOUT
+router.post("/logout", (req, res) => {
+  if (req.session.logged_in) {
+    req.session.destroy(() => res.status(204).end());
+  } else {
+    res.status(404).end();
   }
 });
 
