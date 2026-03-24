@@ -152,8 +152,11 @@ function handleGlobalClick(e) {
   if (btn.classList.contains('btn-save-brewery')) handleSave(btn);
   if (btn.classList.contains('btn-map-brewery')) handleMap(btn);
   if (btn.classList.contains('btn-map-saved')) openSavedMap(btn);
-  if (btn.classList.contains('btn-delete-brewery') && !btn.id) deleteBrewery(btn.dataset.id);
+  const deleteBtn = document.querySelector('#deletebrewery');
+if (deleteBtn) {
+  deleteBtn.addEventListener('click', deleteBreweryById);
 }
+
 
 // ======================
 // SAVE BREWERY
@@ -247,9 +250,9 @@ async function deleteBrewery(id) {
 // ======================
 async function deleteBreweryById(e) {
   e.preventDefault();
-  const brew_id = document.querySelector('#brewid')?.innerHTML;
+  const brew_id = document.querySelector('#brewid')?.value;
   if (!brew_id) return;
-  await deleteBrewery(brew_id);
+  deleteBrewery(brew_id);
 }
 
 // ======================
