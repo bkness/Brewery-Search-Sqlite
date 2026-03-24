@@ -229,12 +229,17 @@ async function handleSave(btn) {
 // ======================
 async function deleteBrewery(id) {
   if (!id) return;
+
   const res = await fetch(`/api/breweries/${id}`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
   });
-  if (res.ok) window.location.replace('/api/breweries');
-  else showToast('Failed to delete brewery');
+
+  if (res.ok) {
+    window.location.replace('/api/breweries');
+  } else {
+    showToast('Failed to delete brewery');
+  }
 }
 
 // ======================
