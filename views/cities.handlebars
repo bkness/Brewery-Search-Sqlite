@@ -1,50 +1,60 @@
-<section class="hero">
-  <div class="hero-content">
-    <h1 class="shadow-hover">Discover Local Breweries 🍺</h1>
-    <p>Search any city and explore craft beer spots near you</p>
-
-    <form action="/search" method="GET" id="search-form" class="search-form" role="search" aria-label="Search breweries">
-      <input type="text" name="name" class="search-input search-name" placeholder="Enter a brewery name" aria-label="Brewery name" autocomplete="organization" />
-      <input type="text" name="city" class="search-input search-city" placeholder="City name" aria-label="City" autocomplete="address-level2" />
-
-      <div class="custom-select" id="state-select">
-        <input type="hidden" name="state" /> 
-        <div class="custom-select-input" tabindex="0" placeholder="State"></div>
-        <div class="custom-select-dropdown hidden"></div>
-      </div>
-
-      <button type="submit" class="search-submit">Search</button>
-    </form>
-  </div>
-</section>
-
-<section class="results-section">
+<section class="results-section mt-5">
   {{#if apiData.length}}
-    <div class="results-header"><h2>Breweries Found</h2></div>
+    <div class="results-header text-center mb-4">
+      <h2>Breweries in {{searchCity}}</h2>
+    </div>
 
-    <div class="brewery-grid">
-      {{#each apiData as |brewery|}}
-        <div class="brewery-card" data-id="{{brewery.id}}">
-          <div class="card-top">
-            <h3>{{brewery.name}}</h3>
-            <span class="badge">{{brewery.brewery_type}}</span>
+    <div class="brewery-grid d-flex flex-wrap gap-3 justify-content-center">
+      {{#each apiData}}
+        <div class="brewery-card card p-3" style="width: 250px;">
+          <div class="card-top mb-2">
+            <h5>{{this.name}}</h5>
+            <span class="badge bg-secondary">{{this.brewery_type}}</span>
           </div>
 
-          <h6 class="location">📍 {{brewery.city}}, {{brewery.state}}</h6>
+          <h6 class="location">📍 {{this.city}}, {{this.state}}</h6>
 
-          {{#if brewery.website_url}}
-            <a href="{{brewery.website_url}}" target="_blank" rel="noopener noreferrer" class="visit-btn">{{brewery.website_url}}</a>
+          {{#if this.website_url}}
+            <a
+              href="{{this.website_url}}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="visit-btn btn btn-sm btn-outline-primary mt-2"
+            >
+              Visit Website
+            </a>
           {{/if}}
 
-          {{#if brewery.latitude}}
-            <button type="button" class="btn-map-brewery save-btn" data-id="{{brewery.id}}" data-lat="{{brewery.latitude}}" data-lng="{{brewery.longitude}}">
+          {{#if this.latitude}}
+            <button
+              type="button"
+              class="btn-map-brewery save-btn btn btn-sm btn-outline-success mt-2"
+              data-name="{{name}}"
+              data-lat="{{latitude}}"
+              data-lng="{{longitude}}"
+            >
               📍 View Map
             </button>
           {{/if}}
 
-          <div class="card-actions">
-            <button type="button" class="btn-save-brewery save-btn" data-id="{{brewery.id}}" data-name="{{brewery.name}}" data-city="{{brewery.city}}" data-state="{{brewery.state}}" data-address="{{brewery.address_1}}" data-zip="{{brewery.postal_code}}" data-phone="{{brewery.phone}}" data-website="{{brewery.website_url}}" data-lat="{{brewery.latitude}}" data-lng="{{brewery.longitude}}" data-type="{{brewery.brewery_type}}" {{#if (includes ../savedIds brewery.id)}}disabled style="opacity:0.6"{{/if}}>
-              {{#if (includes ../savedIds brewery.id)}}Saved ✓{{else}}⭐ Save{{/if}}
+          <div class="card-actions mt-2">
+            <button
+              type="button"
+              class="btn-save-brewery save-btn btn btn-sm btn-warning"
+              data-id="{{id}}"
+              data-name="{{name}}"
+              data-city="{{city}}"
+              data-state="{{state}}"
+              data-address="{{address_1}}"
+              data-zip="{{postal_code}}"
+              data-phone="{{phone}}"
+              data-website="{{website_url}}"
+              data-lat="{{latitude}}"
+              data-lng="{{longitude}}"
+              data-type="{{brewery_type}}"
+              {{#if (includes ../savedIds id)}}disabled style="opacity:0.6"{{/if}}
+            >
+              {{#if (includes ../savedIds id)}}Saved ✓{{else}}⭐ Save{{/if}}
             </button>
           </div>
         </div>
@@ -52,9 +62,17 @@
     </div>
 
   {{else}}
-    <div class="empty-state">
-      <h2>No breweries yet</h2>
-      <p>Search a city above to get started 🍺</p>
+    <div class="empty-state text-center">
+      <h2>No breweries found in {{searchCity}}</h2>
+      <p>Try searching another city 🍺</p>
     </div>
   {{/if}}
 </section>
+
+<!-- Map Modal -->
+<div id="map-modal" class="modal hidden">
+  <div class="modal-content">
+    <button class="modal-close" id="close-map">&times;</button>
+    <div id="modal-map"></div>
+  </div>
+</div>
