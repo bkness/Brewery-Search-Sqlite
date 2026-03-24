@@ -152,11 +152,8 @@ function handleGlobalClick(e) {
   if (btn.classList.contains('btn-save-brewery')) handleSave(btn);
   if (btn.classList.contains('btn-map-brewery')) handleMap(btn);
   if (btn.classList.contains('btn-map-saved')) openSavedMap(btn);
-  const deleteBtn = document.querySelector('#deletebrewery');
-if (deleteBtn) {
-  deleteBtn.addEventListener('click', deleteBreweryById);
+  if (btn.classList.contains('btn-delete-brewery')) deleteBrewery(btn.dataset.id);
 }
-
 
 // ======================
 // SAVE BREWERY
