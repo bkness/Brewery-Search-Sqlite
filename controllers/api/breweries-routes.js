@@ -1,69 +1,108 @@
 const router = require("express").Router();
-const { User } = require("../../models");
+const { Breweries, User } = require("../../models");
+const withAuth = require("../../utils/auth");
 
-// SIGNUP
-router.post("/", async (req, res) => {
+// GET all saved breweries for logged-in user
+router.get("/", withAuth, async (req, res) => {
   try {
-    const name = req.body?.name?.trim();
-    const email = req.body?.email?.trim().toLowerCase();
-    const password = req.body?.password;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    const userData = await User.create({ name, email, password });
-
-    req.session.save(() => {
-      req.session.user_id = userData.id;
-      req.session.username = userData.name;
-      req.session.logged_in = true;
-      res.status(200).json(userData);
+    const brewData = await Breweries.findAll({
+      where: { user_id: req.session.user_id },
+      include: [User],
+      order: [["createdAt", "DESC"]],
     });
-  } catch (err) {
-    if (err.name === "SequelizeUniqueConstraintError") {
-      return res.status(400).json({ message: "Email or username already exists" });
-    }
-    console.error(err);
-    res.status(500).json({ message: "Signup failed" });
-  }
-});
 
-// LOGIN
-router.post("/login", async (req, res) => {
-  try {
-    const email = req.body?.email?.trim().toLowerCase();
-    const password = req.body?.password;
+    const breweries = brewData.map((b) => b.get({ plain: true }));
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Please enter email and password" });
-    }
-
-    const userData = await User.findOne({ where: { email } });
-    if (!userData) return res.status(400).json({ message: "Incorrect email" });
-
-    const validPassword = await userData.checkPassword(password);
-    if (!validPassword) return res.status(400).json({ message: "Incorrect password" });
-
-    req.session.save(() => {
-      req.session.user_id = userData.id;
-      req.session.username = userData.name;
-      req.session.logged_in = true;
-
-      res.status(200).json({ message: "Login successful" });
+    res.render("mypubs", {
+      breweries,
+      logged_in: true,
+      username: req.session.username,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Login failed" });
+    res.status(500).json(err);
   }
 });
 
-// LOGOUT
-router.post("/logout", (req, res) => {
-  if (req.session.logged_in) {
-    req.session.destroy(() => res.status(204).end());
-  } else {
-    res.status(404).end();
+// GET single saved brewery
+router.get("/singlebrewery/:id", withAuth, async (req, res) => {
+  try {
+    const brewData = await Breweries.findByPk(req.params.id);
+
+    if (!brewData) {
+      return res.status(404).render("404");
+    }
+
+    const brewery = brewData.get({ plain: true });
+
+    res.render("singlebrewery", {
+      brewery,
+      logged_in: true,
+      username: req.session.username,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+// ADD brewery
+router.post("/addbrewery", withAuth, async (req, res) => {
+  try {
+    const newBrew = await Breweries.create({
+      refid: req.body.refid,
+      brewname: req.body.brewname,
+      address: req.body.address,
+      city: req.body.city,
+      state: req.body.state,
+      zipcode: req.body.zipcode || req.body.zip || "",
+      phone: req.body.phone,
+      website: req.body.website,
+      latitude: req.body.latitude,
+      longitude: req.body.longitude,
+      remark: req.body.remark,
+      comments: req.body.comment,
+      created_date: req.body.currentDate,
+      user_id: req.session.user_id,
+    });
+
+    res.status(200).json(newBrew);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+// UPDATE brewery comment
+router.put("/:id", withAuth, async (req, res) => {
+  try {
+    const updated = await Breweries.update(
+      { comments: req.body.comment },
+      { where: { id: req.params.id } }
+    );
+
+    res.status(200).json(updated);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+// DELETE brewery
+router.delete("/:id", withAuth, async (req, res) => {
+  try {
+    const deleted = await Breweries.destroy({
+      where: { id: req.params.id },
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "No brewery found" });
+    }
+
+    res.status(200).json({ deleted });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
   }
 });
 
