@@ -252,7 +252,7 @@ async function deleteBreweryById(e) {
 // ======================
 async function submitComment(e) {
   e.preventDefault();
-  const brew_id = document.querySelector('#brewid')?.innerHTML;
+  const brew_id = document.querySelector('#brewid')?.value;
   const comment = document.querySelector('#pubcomment')?.value.trim();
   if (!brew_id || !comment) return;
 
