@@ -10,18 +10,22 @@
 
     <h5 class='location'>
       <strong>Phone:</strong>
-      {{#if brewery.phone}}<a href='tel:+1{{brewery.phone}}'>{{brewery.phone}}</a>{{else}}<span
-          class='muted-copy'
-        >No phone number available</span>{{/if}}
+      {{#if brewery.phone}}
+        <a href='tel:+1{{brewery.phone}}'>{{brewery.phone}}</a>
+      {{else}}
+        <span class='muted-copy'>No phone number available</span>
+      {{/if}}
     </h5>
 
     <h5 class='location'>
       <strong>Website:</strong>
-      {{#if brewery.website}}<a
-          href='{{brewery.website}}'
-          target='_blank'
-          rel='noopener noreferrer'
-        >{{brewery.website}}</a>{{else}}<span class='muted-copy'>No website available</span>{{/if}}
+      {{#if brewery.website}}
+        <a href='{{brewery.website}}' target='_blank' rel='noopener noreferrer'>
+          {{brewery.website}}
+        </a>
+      {{else}}
+        <span class='muted-copy'>No website available</span>
+      {{/if}}
     </h5>
 
     <div class='pubcomment single-pub-comment'>
@@ -32,8 +36,9 @@
 
     <div class='single-pub-actions'>
       <button id='deletebrewery' type='submit' class='save-btn'>Remove Brewery</button>
-      <p class='single-pub-note'>If you no longer want to keep this brewery in your list, remove it
-        here.</p>
+      <p class='single-pub-note'>
+        If you no longer want to keep this brewery in your list, remove it here.
+      </p>
     </div>
   </article>
 </section>
