@@ -1,4 +1,4 @@
-no// ======================
+// ======================
 // GLOBAL VARIABLES
 // ======================
 let tiles = [];
@@ -7,7 +7,7 @@ let marker;
 let tileResizeTimer;
 
 const STATES = [
-  /* same as your list */
+  /* your list */
 ];
 const TOTAL_BG_IMAGES = 23;
 
@@ -63,10 +63,11 @@ function init() {
   document.addEventListener('keydown', handleEscape);
 
   const mapModal = document.getElementById('map-modal');
-  if (mapModal)
+  if (mapModal) {
     mapModal.addEventListener('click', (e) => {
       if (e.target.id === 'map-modal') closeModal();
     });
+  }
 
   // Comment submit button
   const commentBtn = document.querySelector('#pubcommentsubmit');
@@ -75,6 +76,10 @@ function init() {
   // Single brewery delete button
   const deleteBtn = document.querySelector('#deletebrewery');
   if (deleteBtn) deleteBtn.addEventListener('click', deleteBreweryById);
+
+  // Logout button
+  const logoutBtn = document.querySelector('#logout');
+  if (logoutBtn) logoutBtn.addEventListener('click', logout);
 }
 
 // ======================
@@ -119,7 +124,9 @@ function setupCustomSelect() {
   const dropdown = container.querySelector('.custom-select-dropdown');
 
   function renderOptions(filter = '') {
-    const filtered = STATES.filter((state) => state.toLowerCase().includes(filter.toLowerCase()));
+    const filtered = STATES.filter((state) =>
+      state.toLowerCase().includes(filter.toLowerCase())
+    );
     dropdown.innerHTML = filtered.map((state) => `<div class="option">${state}</div>`).join('');
     dropdown.classList.remove('hidden');
   }
@@ -225,7 +232,7 @@ async function handleSave(btn) {
 }
 
 // ======================
-// DELETE BREWERY
+// DELETE BREWERY (shared)
 // ======================
 async function deleteBrewery(id) {
   if (!id) return;
@@ -266,6 +273,7 @@ async function submitComment(e) {
     body: JSON.stringify({ comment }),
     headers: { 'Content-Type': 'application/json' },
   });
+
   if (res.ok) window.location.replace('/api/breweries');
   else showToast('Failed to add comment');
 }
@@ -276,6 +284,7 @@ async function submitComment(e) {
 function handleMap(btn) {
   openMap(btn.dataset.name, btn.dataset.lat, btn.dataset.lng, 'map-modal', 'modal-map');
 }
+
 function openSavedMap(btn) {
   openMap(
     btn.dataset.name,
@@ -328,8 +337,10 @@ function closeSavedMap() {
   document.body.style.overflow = '';
 }
 
+// ======================
+// LOGOUT
+// ======================
 const logout = async () => {
-  console.log('im working');
   const response = await fetch('/api/user/logout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -341,6 +352,3 @@ const logout = async () => {
     showToast('Failed to logout');
   }
 };
-
-const logoutBtn = document.querySelector('#logout');
-if (logoutBtn) logoutBtn.addEventListener('click', logout);
