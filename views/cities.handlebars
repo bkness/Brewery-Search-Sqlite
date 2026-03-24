@@ -4,48 +4,46 @@
       <h2>Breweries in {{searchCity}}</h2>
     </div>
 
-    <div class="brewery-grid d-flex flex-wrap gap-3 justify-content-center">
+    <div class="brewery-grid">
       {{#each apiData}}
-        <div class="brewery-card card p-3" style="width: 250px;">
-          <div class="card-top mb-2">
-            <h5>{{this.name}}</h5>
-            <span class="badge bg-secondary">{{this.brewery_type}}</span>
+        <article class="brewery-card">
+          <div class="card-header">
+            <h2 class="brew-name">{{this.name}}</h2>
+            {{#if this.brewery_type}}
+              <span class="badge">{{this.brewery_type}}</span>
+            {{/if}}
           </div>
 
-          <h6 class="location">📍 {{this.city}}, {{this.state}}</h6>
+          <p class="brew-location">
+            {{this.street}}<br />
+            {{this.city}}, {{this.state}} {{this.postal_code}}
+          </p>
+
+          {{#if this.phone}}
+            <p class="brew-location">
+              <a href="tel:+1{{this.phone}}">{{this.phone}}</a>
+            </p>
+          {{/if}}
 
           {{#if this.website_url}}
             <a
               href="{{this.website_url}}"
               target="_blank"
               rel="noopener noreferrer"
-              class="visit-btn btn btn-sm btn-outline-primary mt-2"
+              class="visit-btn btn btn-sm btn-outline-primary"
             >
               Visit Website
             </a>
           {{/if}}
 
-          {{#if this.latitude}}
+          <div class="card-actions mt-3">
             <button
-              type="button"
-              class="btn-map-brewery save-btn btn btn-sm btn-outline-success mt-2"
-              data-name="{{name}}"
-              data-lat="{{latitude}}"
-              data-lng="{{longitude}}"
-            >
-              📍 View Map
-            </button>
-          {{/if}}
-
-          <div class="card-actions mt-2">
-            <button
-              type="button"
-              class="btn-save-brewery save-btn btn btn-sm btn-warning"
+              class="btn-save-brewery btn btn-warning"
               data-id="{{id}}"
               data-name="{{name}}"
+              data-address="{{street}}"
               data-city="{{city}}"
               data-state="{{state}}"
-              data-address="{{address_1}}"
               data-zip="{{postal_code}}"
               data-phone="{{phone}}"
               data-website="{{website_url}}"
@@ -54,10 +52,21 @@
               data-type="{{brewery_type}}"
               {{#if (includes ../savedIds id)}}disabled style="opacity:0.6"{{/if}}
             >
-              {{#if (includes ../savedIds id)}}Saved ✓{{else}}⭐ Save{{/if}}
+              {{#if (includes ../savedIds id)}}Saved ✓{{else}}Save Brewery{{/if}}
             </button>
+
+            {{#if latitude}}
+              <button
+                class="btn-map-brewery btn btn-success"
+                data-name="{{name}}"
+                data-lat="{{latitude}}"
+                data-lng="{{longitude}}"
+              >
+                View Map
+              </button>
+            {{/if}}
           </div>
-        </div>
+        </article>
       {{/each}}
     </div>
 
