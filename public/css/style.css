@@ -280,6 +280,10 @@ a.navbar-brand {
   color: #fff;
 }
 
+#search-btn {
+  min-width: 120px;
+}
+
 .btn-accent:hover {
   transform: scale(1.05);
 }
@@ -343,7 +347,6 @@ button.location-link {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-top: 25px;
 }
 
 .search-form input {
@@ -352,7 +355,7 @@ button.location-link {
   border-radius: 8px;
   padding: 0 14px;
   height: 48px;
-  width: 40%%;
+  width: 100%;
   font-size: 0.95rem;
 }
 
@@ -560,7 +563,7 @@ button.location-link {
 
 .form-input {
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 12px 12px 12px 12px;
   color: #f9fafb;
   font-size: 0.95rem;
@@ -593,27 +596,16 @@ button.location-link {
 }
 
 .custom-select {
-  width: 35%;
-  display: inline-grid;
   padding: 0;
   position: relative;
 }
 
 .custom-select-input {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #fff;
-  outline: none;
   display: block;
 }
 
 .custom-select-dropdown {
-  position: absolute;
   margin-top: -6px;
-  left: 0;
-  width: 100%;
   max-height: 220px;
   overflow: auto;
   background: rgba(12, 12, 12, 0.98);
@@ -761,18 +753,18 @@ button.location-link {
 ====================== */
 @media (max-width: 992px) {
   .bg-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 2fr));
     grid-auto-rows: 200px;
   }
 }
 @media (max-width: 768px) {
   .bg-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 2fr);
     grid-auto-rows: 150px;
     padding: 4px;
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .header-container {
     padding: 12px 14px;
   }
@@ -784,10 +776,31 @@ button.location-link {
     padding: 5px 10px;
     margin-bottom: 27px;
   }
+  .modal-content {
+    width: 100%;
+    max-width: none;
+    height: 74vh;
+    border-radius: 18px;
+    transform: translateY(36px);
+  }
+
+  /* Stack search form on narrow screens */
+
+  .search-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .search-form input,
+  .search-form button {
+    flex: none;
+  }
 }
+
 @media (max-width: 480px) {
   .bg-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 2fr;
     grid-auto-rows: 120px;
     gap: 6px;
     padding: 2px;
@@ -798,5 +811,18 @@ button.location-link {
     height: 74vh;
     border-radius: 18px;
     transform: translateY(36px);
+  }
+
+  /* Stack search form on narrow screens */
+  .search-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .search-form input,
+  .search-form button {
+    flex: none;
+    width: 100%;
   }
 }

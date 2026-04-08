@@ -33,3 +33,11 @@ npm-debug.log*
 # Build
 dist/
 build/
+
+# Vendored libraries copied into public (built at postinstall)
+/public/lib/
+
+# Coverage / cache
+coverage/
+.nyc_output/
+.cache/

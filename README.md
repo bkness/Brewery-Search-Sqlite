@@ -1,88 +1,82 @@
 # Local Breweries
 
-## User Story
+A responsive web app for discovering and saving breweries. Search by name, city, or state, view locations on a map, and maintain a personal list of saved breweries with optional comments.
 
-As a user, I want to:
-1. View a list of nearby breweries.
-2. Save selected breweries for future reference.
-3. Sign in to see a private list of saved breweries.
-4. Add comments to or remove breweries from my saved list.
+## Features
 
-## User Acceptance Criteria
+- Search breweries by name, city, or state (Open Brewery DB)
+- Save breweries to a private list (requires login)
+- View locations with Leaflet maps
+- Add comments to saved breweries
+- Responsive UI with mobile-friendly search and navigation
 
-- Display a list of breweries in a specified area.
-- Prompt the user to log in before performing searches.
-- Allow users to save, comment on, or remove breweries from their saved list.
+## Screenshots
 
-## Description
+<p>
+	<img src="images/homepage.png" alt="Homepage Wireframe" width="40%" style="max-width:100%; height:auto; margin-right:12px;" />
+	<img src="images/login.png" alt="Login Wireframe" width="40%" style="max-width:100%; height:auto;" />
+</p>
+<!-- <p>
+	<img src="images/P2-wf-mainsearch.jpg" alt="Main Search Wireframe" width="360" style="max-width:100%; height:auto; margin-right:12px;" />
+	<img src="images/P2-wf-saveddestinations.jpg" alt="Saved Destinations Wireframe" width="360" style="max-width:100%; height:auto;" />
+</p> -->
 
-LocalBreweries is a web application that allows users to find local breweries, save their favorites, and manage their list of saved breweries. Users can log in to access a personalized list of breweries, add comments, and remove breweries as needed. The application integrates with an external API to fetch brewery data and utilizes the Leaflet open-source map for geographical visualization.
+## Quick start
 
-![Homepage Wireframe](images/P2-wf-homepage.jpg)
-![Login Wireframe](images/P2-wf-login.jpg)
-![Main Search Wireframe](images/P2-wf-mainsearch.jpg)
-![Saved Destinations Wireframe](images/P2-wf-saveddestinations.jpg)
+Prerequisites: Node.js (16+ recommended), npm
 
-## Content
+1. Install dependencies
 
-- [Description](#description)
-- [Installation](#installation)
-- [License](#license)
-- [Contributing](#contributing)
-- [Test](#test)
-- [Questions](#questions)
+```bash
+npm install
+```
 
-## Installation
+2. Create a `.env` file (example keys)
 
-To run this project locally, you'll need to install the following dependencies:
+```
+SESSION_SECRET=your_secret_here
+DATABASE_URL=./database.sqlite
+```
 
-- express
-- mysql2
-- sequelize
-- dotenv
-- handlebars
-- express-handlebars
-- express-session
-- bcrypt
+3. Run the app
 
-Use the following commands to set up the project:
+```bash
+npm start       # start production server (node server.js)
+# or, if configured for development:
+npm run dev     # optional: nodemon + browser-sync workflow
+```
 
-``npm install express mysql2 sequelize dotenv handlebars express-handlebars express-session bcrypt``
+The app serves on http://localhost:3001 by default (or the proxy port if using BrowserSync).
 
-## License
+## Development notes
 
-This project is licensed under the ISC license.
+- Static assets live in `public/` and Handlebars views are under `views/`.
+- The app uses Sequelize with SQLite by default; check `config/connection.js` and `seeds/` for seed data.
+- For fast frontend feedback you can use a BrowserSync + nodemon dev workflow (not required).
 
-## Contributing
+## APIs & Data
 
-We welcome contributions from the community. Please feel free to submit pull requests.
+- Brewery data source: Open Brewery DB — https://api.openbrewerydb.org
+
+## Contributors & Credits
 
 Contributors:
+
 - [SJBDLT](https://github.com/SJBDLT)
 - [Bkness](https://github.com/bkness)
 - [Shawnclarke21](https://github.com/shawnclarke21)
 
-Server APIs:
-- [Open Brewery DB](https://api.openbrewerydb.org)
+Server/API integrations and assets by the contributors above.
 
-Coding BootCamp Curriculum:
-© 2022 edX Boot Camps LLC. All Rights Reserved.
+Acknowledgements:
+Coding BootCamp Curriculum — © 2022 edX Boot Camps LLC. All Rights Reserved.
 
-## Test
+## License
 
-We have verified the API calls and ensured that input, update, and deletion operations on the database are functioning correctly.
+ISC
 
-## Questions
+## Contact
 
-For any questions, please contact us:
+- [Bkness](https://github.com/bkness) — kbrandon863@gmail.com
 
-- [SJBDLT](https://github.com/SJBDLT) - sblake@blakeis.com
-- [Bkness](https://github.com/bkness) - kbrandon863@gmail.com
-- [Shawnclarke21](https://github.com/shawnclarke21) - srclark777@gmail.com
-
-Visit our deployed application on Heroku: [LocalBreweries](https://local-breweries-d7e27e181616.herokuapp.com/)<br>
-https://local-breweries-d7e27e181616.herokuapp.com/
-
-Repository: [GitHub](https://github.com/sjbdlt/LocalBreweries.git)
-
-![Local Breweries](images/LocalBrewery.png)
+Deployed app: [Brewery Search](https://brewery-search.onrender.com/)
