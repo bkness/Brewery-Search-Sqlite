@@ -1,39 +1,76 @@
-<section class='results-section single-pub-page'>
-  <article class='brewery-card single-pub-card' data-id='{{brewery.id}}'>
-    <div class='card-top'>
-      <h1 class='commenting-card'>{{brewery.name}}</h1>
-      {{#if brewery.remark}}<span class='badge'>{{brewery.remark}}</span>{{/if}}
+<section class='single-brewery-page mt-5'>
+
+  <!-- Brewery Name -->
+  <h1 class='text-center mb-4'>{{brewery.name}}</h1>
+
+  <!-- Brewery Details -->
+  <div class='brewery-details-card p-4 border rounded'>
+    <p><strong>Address:</strong><br />
+      {{brewery.address}}<br />
+      {{brewery.city}},
+      {{brewery.state}}
+      {{brewery.zipcode}}
+    </p>
+
+    {{#if brewery.phone}}
+      <p><strong>Phone:</strong> <a href='tel:+1{{brewery.phone}}'>{{brewery.phone}}</a></p>
+    {{/if}}
+
+    {{#if brewery.website}}
+      <p>
+        <strong>Website:</strong>
+        <a href='{{brewery.website}}' target='_blank' rel='noopener noreferrer'>
+          Visit Website
+        </a>
+      </p>
+    {{/if}}
+
+    <div class='mt-3'>
+      <button
+        class='btn btn-success btn-map-brewery'
+        data-name='{{brewery.name}}'
+        data-lat='{{brewery.latitude}}'
+        data-lng='{{brewery.longitude}}'
+      >
+        View Map
+      </button>
     </div>
+  </div>
 
-    <h5 class='location'>{{brewery.address}}</h5>
-    <h5 class='location'>{{brewery.city}}, {{brewery.state}} {{brewery.zipcode}}</h5>
+  <!-- Comments Section -->
+  <section class='comments-section mt-5'>
+    <h3>Your Notes</h3>
 
-    <h5 class='location'>
-      <strong>Phone:</strong>
-      {{#if brewery.phone}}<a href='tel:+1{{brewery.phone}}'>{{brewery.phone}}</a>{{else}}<span
-          class='muted-copy'
-        >No phone number available</span>{{/if}}
-    </h5>
+    {{#if brewery.comments}}
+      <div class='existing-comment p-3 mb-3 border rounded'>
+        <p>{{brewery.comments}}</p>
+      </div>
+    {{/if}}
 
-    <h5 class='location'>
-      <strong>Website:</strong>
-      {{#if brewery.website}}<a
-          href='{{brewery.website}}'
-          target='_blank'
-          rel='noopener noreferrer'
-        >{{brewery.website}}</a>{{else}}<span class='muted-copy'>No website available</span>{{/if}}
-    </h5>
+    <textarea
+      id='pubcomment'
+      class='form-control mb-3'
+      placeholder='Add a comment...'
+      rows='3'
+    ></textarea>
 
-    <div class='pubcomment single-pub-comment'>
-      <label for='pubcomment'>Comment:</label>
-      <textarea class='input' id='pubcomment'></textarea>
-      <button id='pubcommentsubmit' type='submit' class='save-btn'>Submit Comment</button>
-    </div>
+    <button id='pubcommentsubmit' class='btn btn-primary'>Save Comment</button>
+  </section>
 
-    <div class='single-pub-actions'>
-      <button id='deletebrewery' type='submit' class='save-btn'>Remove Brewery</button>
-      <p class='single-pub-note'>If you no longer want to keep this brewery in your list, remove it
-        here.</p>
-    </div>
-  </article>
+  <!-- Delete Brewery -->
+  <div class='mt-4'>
+    <button id='deletebrewery' class='btn btn-danger'>Remove Brewery</button>
+  </div>
+
+  <!-- Hidden Brewery ID (required for JS) -->
+  <input type='hidden' id='brewid' value='{{brewery.id}}' />
+
 </section>
+
+<!-- Map Modal -->
+<div id='map-modal' class='modal hidden'>
+  <div class='modal-content'>
+    <button class='modal-close' id='close-map'>&times;</button>
+    <div id='modal-map'></div>
+  </div>
+</div>

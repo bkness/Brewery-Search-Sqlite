@@ -7,7 +7,56 @@ let marker;
 let tileResizeTimer;
 
 const STATES = [
-  /* same as your list */
+  'Alabama',
+  'Alaska',
+  'Arizona',
+  'Arkansas',
+  'California',
+  'Colorado',
+  'Connecticut',
+  'Delaware',
+  'Florida',
+  'Georgia',
+  'Hawaii',
+  'Idaho',
+  'Illinois',
+  'Indiana',
+  'Iowa',
+  'Kansas',
+  'Kentucky',
+  'Louisiana',
+  'Maine',
+  'Maryland',
+  'Massachusetts',
+  'Michigan',
+  'Minnesota',
+  'Mississippi',
+  'Missouri',
+  'Montana',
+  'Nebraska',
+  'Nevada',
+  'New Hampshire',
+  'New Jersey',
+  'New Mexico',
+  'New York',
+  'North Carolina',
+  'North Dakota',
+  'Ohio',
+  'Oklahoma',
+  'Oregon',
+  'Pennsylvania',
+  'Rhode Island',
+  'South Carolina',
+  'South Dakota',
+  'Tennessee',
+  'Texas',
+  'Utah',
+  'Vermont',
+  'Virginia',
+  'Washington',
+  'West Virginia',
+  'Wisconsin',
+  'Wyoming',
 ];
 const TOTAL_BG_IMAGES = 23;
 
@@ -59,6 +108,9 @@ function init() {
   if (form) form.addEventListener('submit', handleSearch);
 
   setupCustomSelect();
+  setupAuthForms();
+  setupPasswordToggles();
+  setupLogout();
   document.addEventListener('click', handleGlobalClick);
   document.addEventListener('keydown', handleEscape);
 
@@ -68,6 +120,12 @@ function init() {
       if (e.target.id === 'map-modal') closeModal();
     });
 
+  const closeSavedMapBtn = document.getElementById('close-mypubs-map');
+  if (closeSavedMapBtn) closeSavedMapBtn.addEventListener('click', closeSavedMap);
+
+  const closeMapBtn = document.getElementById('close-map');
+  if (closeMapBtn) closeMapBtn.addEventListener('click', closeModal);
+
   // Comment submit button
   const commentBtn = document.querySelector('#pubcommentsubmit');
   if (commentBtn) commentBtn.addEventListener('click', submitComment);
@@ -75,6 +133,18 @@ function init() {
   // Single brewery delete button
   const deleteBtn = document.querySelector('#deletebrewery');
   if (deleteBtn) deleteBtn.addEventListener('click', deleteBreweryById);
+}
+
+async function parseApiError(res, fallbackMessage) {
+  const contentType = res.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    const data = await res.json();
+    return data?.message || fallbackMessage;
+  }
+
+  const text = await res.text();
+  return text || fallbackMessage;
 }
 
 // ======================
@@ -95,7 +165,11 @@ function handleSearch(e) {
   const form = e.currentTarget;
   const name = form.querySelector('[name="name"]')?.value.trim() || '';
   const city = form.querySelector('[name="city"]')?.value.trim() || '';
-  const state = form.querySelector('[name="state"]')?.value.trim() || '';
+  // prefer the hidden selected value, fall back to the visible input text
+  const stateHidden = form.querySelector('[name="state"]')?.value.trim() || '';
+  const stateInputText =
+    form.querySelector('#state-select .custom-select-input')?.value.trim() || '';
+  const state = stateHidden || stateInputText;
 
   if (!name && !city && !state) return alert('Please enter a brewery name, city, or state');
 
@@ -116,29 +190,232 @@ function setupCustomSelect() {
 
   const input = container.querySelector('.custom-select-input');
   const hiddenInput = container.querySelector("input[type='hidden']");
-  const dropdown = container.querySelector('.custom-select-dropdown');
+
+  // create a global dropdown appended to body so it isn't clipped by parent overflow
+  let dropdown = document.getElementById('global-state-dropdown');
+  if (!dropdown) {
+    dropdown = document.createElement('div');
+    dropdown.id = 'global-state-dropdown';
+    dropdown.className = 'custom-select-dropdown hidden';
+    document.body.appendChild(dropdown);
+  }
+
+  let options = [];
+  let highlighted = -1;
+
+  function positionDropdown() {
+    const rect = input.getBoundingClientRect();
+    dropdown.style.position = 'absolute';
+    dropdown.style.left = `${rect.left + window.scrollX}px`;
+    dropdown.style.top = `${rect.bottom + window.scrollY + 6}px`;
+    dropdown.style.width = `${rect.width}px`;
+  }
 
   function renderOptions(filter = '') {
-    const filtered = STATES.filter((state) => state.toLowerCase().includes(filter.toLowerCase()));
-    dropdown.innerHTML = filtered.map((state) => `<div class="option">${state}</div>`).join('');
-    dropdown.classList.remove('hidden');
+    const filtered = STATES.filter((s) => s.toLowerCase().includes(filter.toLowerCase()));
+    dropdown.innerHTML = filtered
+      .map((s, i) => `<div class="option" data-index="${i}">${s}</div>`)
+      .join('');
+    options = Array.from(dropdown.querySelectorAll('.option'));
+    highlighted = -1;
+    if (options.length === 0) dropdown.classList.add('hidden');
+    else {
+      dropdown.classList.remove('hidden');
+      positionDropdown();
+    }
+  }
+
+  function highlight(idx) {
+    if (!options.length) return;
+    if (highlighted >= 0 && options[highlighted])
+      options[highlighted].classList.remove('highlight');
+    highlighted = Math.max(-1, Math.min(idx, options.length - 1));
+    if (highlighted >= 0 && options[highlighted]) {
+      options[highlighted].classList.add('highlight');
+      options[highlighted].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function selectOptionByIndex(idx) {
+    if (!options.length || idx < 0 || idx >= options.length) return;
+    const val = options[idx].textContent;
+    input.value = hiddenInput.value = val;
+    dropdown.classList.add('hidden');
+    input.focus();
   }
 
   input.addEventListener('focus', () => renderOptions(''));
+
   input.addEventListener('input', (e) => {
-    hiddenInput.value = e.target.value.trim();
+    hiddenInput.value = '';
     renderOptions(e.target.value);
   });
 
-  dropdown.addEventListener('click', (e) => {
-    if (e.target.classList.contains('option')) {
-      input.value = hiddenInput.value = e.target.textContent;
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (options.length === 0) renderOptions(input.value);
+      highlight(highlighted + 1);
+      return;
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlight(highlighted - 1);
+      return;
+    }
+    if (e.key === 'Enter') {
+      if (!dropdown.classList.contains('hidden') && highlighted >= 0) {
+        e.preventDefault();
+        selectOptionByIndex(highlighted);
+      }
+      return;
+    }
+    if (e.key === 'Escape') {
       dropdown.classList.add('hidden');
+      return;
     }
   });
 
+  dropdown.addEventListener('click', (e) => {
+    const option = e.target.closest('.option');
+    if (!option) return;
+    const idx = parseInt(option.dataset.index, 10);
+    if (!Number.isNaN(idx)) selectOptionByIndex(idx);
+  });
+
+  // hide when clicking outside input or dropdown
   document.addEventListener('click', (e) => {
-    if (!container.contains(e.target)) dropdown.classList.add('hidden');
+    if (e.target === input || dropdown.contains(e.target) || container.contains(e.target)) return;
+    dropdown.classList.add('hidden');
+  });
+
+  // reposition on scroll/resize
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!dropdown.classList.contains('hidden')) positionDropdown();
+    },
+    { passive: true }
+  );
+  window.addEventListener('resize', () => {
+    if (!dropdown.classList.contains('hidden')) positionDropdown();
+  });
+}
+
+// ======================
+// AUTH
+// ======================
+function setupPasswordToggles() {
+  const toggleButtons = document.querySelectorAll('.toggle-pass');
+  if (!toggleButtons.length) return;
+
+  toggleButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const form = btn.closest('form');
+      const input =
+        (form && btn.dataset.target ? form.querySelector(btn.dataset.target) : null) ||
+        (btn.dataset.target ? document.querySelector(btn.dataset.target) : null);
+
+      if (!input) return;
+
+      input.type = input.type === 'password' ? 'text' : 'password';
+      btn.textContent = input.type === 'password' ? 'Show' : 'Hide';
+    });
+  });
+}
+
+function setupAuthForms() {
+  const loginForm = document.querySelector('.login-form');
+  const signupForm = document.querySelector('.signup-form');
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = loginForm.querySelector('[name="email"]')?.value.trim() || '';
+      const password = loginForm.querySelector('[name="password"]')?.value.trim() || '';
+      const errorEl = loginForm.querySelector('.login-error');
+      if (errorEl) errorEl.textContent = '';
+
+      if (!email || !password) {
+        if (errorEl) errorEl.textContent = 'Please fill in both fields.';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/user/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!res.ok) {
+          const message = await parseApiError(res, 'Login failed');
+          throw new Error(message);
+        }
+
+        window.location.href = '/';
+      } catch (err) {
+        if (errorEl) errorEl.textContent = err.message;
+      }
+    });
+  }
+
+  if (signupForm) {
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = signupForm.querySelector('[name="username"]')?.value.trim() || '';
+      const email = signupForm.querySelector('[name="email"]')?.value.trim() || '';
+      const password = signupForm.querySelector('[name="password"]')?.value.trim() || '';
+      const errorEl = signupForm.querySelector('.signup-error');
+      if (errorEl) errorEl.textContent = '';
+
+      if (!name || !email || !password) {
+        if (errorEl) errorEl.textContent = 'All fields are required.';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        if (!res.ok) {
+          const message = await parseApiError(res, 'Signup failed');
+          throw new Error(message);
+        }
+
+        window.location.href = '/';
+      } catch (err) {
+        if (errorEl) errorEl.textContent = err.message;
+      }
+    });
+  }
+}
+
+function setupLogout() {
+  const logoutBtn = document.getElementById('logout');
+  if (!logoutBtn) return;
+
+  logoutBtn.addEventListener('click', async () => {
+    try {
+      const response = await fetch('/api/user/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        document.location.replace('/');
+      } else {
+        showToast('Failed to logout');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to logout');
+    }
   });
 }
 
@@ -151,6 +428,7 @@ function handleGlobalClick(e) {
 
   if (btn.classList.contains('btn-save-brewery')) handleSave(btn);
   if (btn.classList.contains('btn-map-brewery')) handleMap(btn);
+  if (btn.classList.contains('location-link')) handleMap(btn);
   if (btn.classList.contains('btn-map-saved')) openSavedMap(btn);
   if (btn.classList.contains('btn-delete-brewery') && !btn.id) deleteBrewery(btn.dataset.id);
 }
@@ -242,7 +520,7 @@ async function deleteBrewery(id) {
 // ======================
 async function deleteBreweryById(e) {
   e.preventDefault();
-  const brew_id = document.querySelector('#brewid')?.innerHTML;
+  const brew_id = document.querySelector('#brewid')?.value;
   if (!brew_id) return;
   await deleteBrewery(brew_id);
 }
@@ -252,7 +530,7 @@ async function deleteBreweryById(e) {
 // ======================
 async function submitComment(e) {
   e.preventDefault();
-  const brew_id = document.querySelector('#brewid')?.innerHTML;
+  const brew_id = document.querySelector('#brewid')?.value;
   const comment = document.querySelector('#pubcomment')?.value.trim();
   if (!brew_id || !comment) return;
 
@@ -322,19 +600,3 @@ function closeSavedMap() {
   modal.addEventListener('transitionend', () => modal.classList.add('hidden'), { once: true });
   document.body.style.overflow = '';
 }
-
-const logout = async () => {
-  console.log('im working');
-  const response = await fetch('/api/user/logout', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-  if (response.ok) {
-    document.location.replace('/');
-  } else {
-    showToast('Failed to logout');
-  }
-};
-
-document.querySelector('#logout').addEventListener('click', logout);

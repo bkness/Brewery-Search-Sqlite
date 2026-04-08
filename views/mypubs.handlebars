@@ -1,51 +1,105 @@
-<section class='results-section mypubs-section'>
-  <div class='results-header'><h2>My Saved Pubs</h2></div>
+<section class='results-section mypubs-section mt-5'>
+  <div class='results-header text-center mb-4'>
+    <h2>My Saved Pubs</h2>
+  </div>
 
-  <div class='brewery-grid mypubs-grid'>
-    {{#each breweries as |brewery|}}
-      <article class='brewery-card mypub-card' data-id='{{brewery.id}}'>
-        <div class='card-top'>
-          <h2>{{brewery.name}}</h2>
-          {{#if brewery.remark}}<span class='badge'>{{brewery.remark}}</span>{{/if}}
-        </div>
+  {{#if breweries.length}}
+    <div class='brewery-grid mypubs-grid'>
+      {{#each breweries as |brewery|}}
+        <article class='brewery-card mypub-card' data-id='{{brewery.id}}'>
+          <div class='card-top'>
+            <h2>
+              <a
+                href='{{breweryExternalUrl
+                  brewery.website
+                  brewery.name
+                  brewery.city
+                  brewery.state
+                }}'
+                target='_blank'
+                rel='noopener noreferrer'
+                class='brewery-name visit-btn'
+              >
+                {{brewery.name}}
+              </a>
+            </h2>
+            {{#if brewery.remark}}
+              <span class='badge'>{{brewery.remark}}</span>
+            {{/if}}
+          </div>
 
-        <h5 class='location'>{{brewery.address}}</h5>
-        <h5 class='location'>{{brewery.city}}, {{brewery.state}} {{brewery.zipcode}}</h5>
+          <div class='card-content'>
+            <h5 class='location'>{{brewery.address}}</h5>
+            <h5 class='location'>{{brewery.city}}, {{brewery.state}} {{brewery.zipcode}}</h5>
+            {{#if brewery.phone}}
+              <h5 class='location'>
+                <a href='tel:+1{{brewery.phone}}'>{{brewery.phone}}</a>
+              </h5>
+            {{/if}}
+            {{#if brewery.website}}
+              <a
+                href='{{brewery.website}}'
+                target='_blank'
+                rel='noopener noreferrer'
+                class='visit-btn btn btn-sm btn-outline-primary mt-2'
+              >
+                Visit Website
+              </a>
+            {{/if}}
+            <a
+              href='{{yelpUrl brewery.name brewery.city brewery.state}}'
+              target='_blank'
+              rel='noopener noreferrer'
+              class='visit-btn btn btn-sm btn-outline-primary mt-2'
+            >
+              See Reviews
+            </a>
+            {{#if brewery.comments}}
+              <h3 class='location mt-2'>{{brewery.comments}}</h3>
+            {{/if}}
+          </div>
 
-        {{#if brewery.phone}}
-          <h5 class='location'><a href='tel:+1{{brewery.phone}}'>{{brewery.phone}}</a></h5>
-        {{/if}}
+          <div class='card-actions mypub-actions mt-3'>
+            <a href='/api/breweries/singlebrewery/{{brewery.id}}' class='save-btn btn btn-warning'>
+              Comment
+            </a>
 
-        {{#if brewery.website}}
-          <a
-            href='{{brewery.website}}'
-            target='_blank'
-            rel='noopener noreferrer'
-            class='visit-btn'
-          >Visit Website</a>
-        {{/if}}
+            {{#if brewery.latitude}}
+              <button
+                type='button'
+                class='btn-map-saved btn btn-success'
+                data-id='{{brewery.id}}'
+                data-lat='{{brewery.latitude}}'
+                data-lng='{{brewery.longitude}}'
+              >
+                View Map
+              </button>
+            {{/if}}
 
-        {{#if brewery.comments}}
-          <h3 class='location'>{{brewery.comments}}</h3>
-        {{/if}}
-
-        <div class='mypub-actions'>
-          <a href='/api/breweries/singlebrewery/{{brewery.id}}' class='save-btn'>Comment</a>
-
-          {{#if brewery.latitude}}
             <button
               type='button'
-              class='save-btn btn-map-saved'
+              class='btn-delete-brewery btn btn-danger'
               data-id='{{brewery.id}}'
-              data-lat='{{brewery.latitude}}'
-              data-lng='{{brewery.longitude}}'
-            >View Map</button>
-          {{/if}}
+            >
+              Remove Brewery
+            </button>
+          </div>
+        </article>
+      {{/each}}
+    </div>
 
-          <button type='button' class='save-btn btn-delete-brewery' data-id='{{brewery.id}}'>Remove
-            Brewery</button>
-        </div>
-      </article>
-    {{/each}}
-  </div>
+  {{else}}
+    <div class='empty-state text-center'>
+      <h2>No saved pubs yet</h2>
+      <p>Save breweries from the search page to build your list 🍺</p>
+    </div>
+  {{/if}}
 </section>
+
+<!-- Map Modal -->
+<div id='mypubs-map-modal' class='modal'>
+  <div class='modal-content'>
+    <button class='modal-close' id='close-mypubs-map'>&times;</button>
+    <div id='mypubs-modal-map'></div>
+  </div>
+</div>

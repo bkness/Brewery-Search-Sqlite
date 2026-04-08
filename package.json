@@ -4,6 +4,8 @@
   "description": "# User Story",
   "main": "server.js",
   "scripts": {
+    "copy:bootstrap": "mkdir -p public/lib/bootstrap && cp -R node_modules/bootstrap/dist/* public/lib/bootstrap/",
+    "postinstall": "npm run copy:bootstrap",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
@@ -12,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "bootstrap": "^5.3.8",
     "connect-session-sequelize": "^7.1.7",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
