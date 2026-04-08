@@ -38,10 +38,15 @@ router.get('/singlebrewery/:id', async (req, res) => {
         },
       ],
     });
-    const breweries = brewData.get({ plain: true });
-    //res.json(breweries);
+
+    if (!brewData) {
+      return res.status(404).json({ message: 'No brewery found with that id!' });
+    }
+
+    const brewery = brewData.get({ plain: true });
+    //res.json(brewery);
     res.render('mypubscomment', {
-      breweries,
+      brewery,
       logged_in: true,
     });
   } catch (err) {
@@ -61,7 +66,7 @@ router.post('/addbrewery/', withAuth, async (req, res) => {
       address: req.body.address,
       city: req.body.city,
       state: req.body.state,
-      zipcode: req.body.zipcode || req.body.zip || '',
+      zipcode: req.body.zipcode,
       phone: req.body.phone,
       website: req.body.website,
       latitude: req.body.latitude,
@@ -91,16 +96,16 @@ router.put('/:id', withAuth, (req, res) => {
       },
     }
   )
-    .then((updatedBreweries) => {
-      //res.json(updatedBreweries);
-      res.render('mypubs', {
-        Breweries: updatedBreweries,
-        logged_in: true,
-      });
+    .then(([affectedRows]) => {
+      if (!affectedRows) {
+        return res.status(404).json({ message: 'No brewery found with that id!' });
+      }
+
+      return res.status(200).json({ message: 'Comment updated', affectedRows });
     })
     .catch((err) => {
       console.log(err);
-      res.json(err);
+      res.status(500).json(err);
     });
 });
 

@@ -1,48 +1,88 @@
- <!-- Login / Signup Forms -->
-        <div class="login-page mt-5">
-          <h1>Welcome to Brewery Search!</h1>
-          <h5>Please log in or sign up to continue.</h5>
+<div class='login-page mt-5'>
+  <h1 class='login-title text-center mb-2'>Welcome to Brewery Search</h1>
+  <h5 class='login-subtitle text-center mb-4'>Log in or create an account to continue</h5>
 
-          <div class="d-flex flex-wrap justify-content-center gap-4">
-            <!-- Login -->
-            <form id="loginForm" class="p-3 border rounded" style="min-width: 300px;">
-              <h2>Login</h2>
-              <div id="loginError" class="error-message mb-2" aria-live="polite"></div>
-              <div class="form-group mb-2">
-                <input type="email" id="loginName" name="email" placeholder=" " autocomplete="email" required />
-                <label for="loginName">Email:</label>
-              </div>
-              <div class="form-group password-group mb-2">
-                <input type="password" id="loginPassword" name="password" placeholder=" " autocomplete="current-password" required />
-                <label for="loginPassword">Password:</label>
-                <button type="button" class="toggle-pass" data-target="#loginPassword">Show</button>
-              </div>
-              <div class="form-group form-actions">
-                <button type="submit" id="loginSubmit" class="btn btn-primary w-100">Login</button>
-              </div>
-            </form>
+  <div class='auth-forms d-flex flex-wrap justify-content-center gap-5'>
 
-            <!-- Sign Up -->
-            <form id="signupForm" class="p-3 border rounded" style="min-width: 300px;">
-              <h2>Sign Up</h2>
-              <div id="signupError" class="error-message mb-2" aria-live="polite"></div>
-              <div class="form-group mb-2">
-                <input type="text" id="createName" name="name" placeholder=" " autocomplete="username" required />
-                <label for="createName">Username:</label>
-              </div>
-              <div class="form-group mb-2">
-                <input type="email" id="createEmail" name="email" placeholder=" " autocomplete="email" required />
-                <label for="createEmail">Email:</label>
-              </div>
-              <div class="form-group password-group mb-2">
-                <input type="password" id="createPassword" name="password" placeholder=" " autocomplete="new-password" required />
-                <label for="createPassword">Password:</label>
-                <button type="button" class="toggle-pass" data-target="#createPassword">Show</button>
-              </div>
-              <div class="form-group form-actions">
-                <button type="submit" id="signupSubmit" class="btn btn-success w-100">Sign Up</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </main>
+    <!-- Login Form -->
+    <form class='auth-form login-form p-4 border rounded'>
+      <h2 class='form-title mb-3'>Login</h2>
+
+      <div class='error-message login-error mb-2' aria-live='polite'></div>
+
+      <div class='form-group mb-3'>
+        <input
+          type='email'
+          name='email'
+          class='form-input'
+          placeholder=' '
+          autocomplete='email'
+          required
+        />
+        <label>Email</label>
+      </div>
+
+      <div class='form-group password-group mb-3'>
+        <input
+          type='password'
+          name='password'
+          class='form-input password-input'
+          placeholder=' '
+          autocomplete='current-password'
+          required
+        />
+        <label>Password</label>
+        <button type='button' class='toggle-pass' data-target='.password-input'>Show</button>
+      </div>
+
+      <button type='submit' class='btn btn-accent w-100'>Login</button>
+    </form>
+
+    <!-- Signup Form -->
+    <form class='auth-form signup-form p-4 border rounded'>
+      <h2 class='form-title mb-3'>Sign Up</h2>
+
+      <div class='error-message signup-error mb-2' aria-live='polite'></div>
+
+      <div class='form-group mb-3'>
+        <input
+          type='text'
+          name='username'
+          class='form-input'
+          placeholder=' '
+          autocomplete='username'
+          required
+        />
+        <label>Username</label>
+      </div>
+
+      <div class='form-group mb-3'>
+        <input
+          type='email'
+          name='email'
+          class='form-input'
+          placeholder=' '
+          autocomplete='email'
+          required
+        />
+        <label>Email</label>
+      </div>
+
+      <div class='form-group password-group mb-3'>
+        <input
+          type='password'
+          name='password'
+          class='form-input password-input'
+          placeholder=' '
+          autocomplete='new-password'
+          required
+        />
+        <label>Password</label>
+        <button type='button' class='toggle-pass' data-target='.password-input'>Show</button>
+      </div>
+
+      <button type='submit' class='btn btn-success w-100'>Sign Up</button>
+    </form>
+
+  </div>
+</div>
